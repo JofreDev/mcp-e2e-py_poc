@@ -94,42 +94,6 @@ def main() -> None:
         "Authorization": f"Bearer {access_token}",
         "Content-Type": "application/json",
     }
-    status, headers, response = request_json(
-        "127.0.0.1",
-        mcp_port,
-        "/mcp",
-        {
-            "jsonrpc": "2.0",
-            "id": 1,
-            "method": "initialize",
-            "params": {
-                "protocolVersion": "2025-03-26",
-                "capabilities": {},
-                "clientInfo": {"name": "mcp-e2e-smoke-test", "version": "0.1.0"},
-            },
-        },
-        mcp_headers,
-    )
-    require_success(status, response)
-    session_id = headers.get("mcp-session-id")
-    if session_id is None:
-        raise RuntimeError("MCP server did not establish a session")
-
-    session_headers = {
-        **mcp_headers,
-        "MCP-Protocol-Version": "2025-03-26",
-        "Mcp-Session-Id": session_id,
-    }
-    status, _, response = request_json(
-        "127.0.0.1",
-        mcp_port,
-        "/mcp",
-        {"jsonrpc": "2.0", "method": "notifications/initialized", "params": {}},
-        session_headers,
-    )
-    if status != 202:
-        raise RuntimeError(f"MCP initialization notification failed with HTTP {status}: {response}")
-
     tool_arguments: dict[str, object] = {
         "amount": arguments.amount,
         "from_currency": arguments.from_currency,
@@ -147,7 +111,7 @@ def main() -> None:
             "method": "tools/call",
             "params": {"name": "convert_currency", "arguments": tool_arguments},
         },
-        session_headers,
+        mcp_headers,
     )
     print(json.dumps(require_success(status, response), indent=2))
 

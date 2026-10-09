@@ -1,6 +1,7 @@
 import httpx
 import pytest
 
+from mcp_service.server import server
 from mcp_service.services import (
     AuthenticationError,
     AuthorizationError,
@@ -77,3 +78,16 @@ async def test_invalid_amount_is_rejected_before_provider_call(amount: float) ->
 def test_missing_bearer_header_is_rejected() -> None:
     with pytest.raises(AuthenticationError, match="required"):
         extract_bearer_token({})
+
+
+@pytest.mark.asyncio
+async def test_fastmcp_hides_request_headers_from_tool_schema() -> None:
+    tool = next(tool for tool in await server.list_tools() if tool.name == "convert_currency")
+
+    assert set(tool.parameters["properties"]) == {
+        "amount",
+        "from_currency",
+        "to_currency",
+        "date",
+    }
+    assert "headers" not in tool.parameters["required"]

@@ -1,8 +1,8 @@
 # MCP Service
 
-Servidor MCP Streamable HTTP que convierte monedas mediante Frankfurter. Cada ejecucion de
-la herramienta valida el JWT contra `auth-service` y requiere el permiso `fx:read`, asignado
-al rol `agent`.
+Servidor FastMCP con transporte Streamable HTTP que convierte monedas mediante Frankfurter.
+Cada ejecucion de la herramienta valida el JWT contra `auth-service` y requiere el permiso
+`fx:read`, asignado al rol `agent`.
 
 ## Requisitos
 
@@ -18,10 +18,11 @@ uv sync
 uv run mcp-service
 ```
 
-El endpoint MCP se publica en `http://127.0.0.1:8001/mcp` por defecto. Configure el cliente
-MCP para usar Streamable HTTP y enviar `Authorization: Bearer <access_token>` en cada solicitud.
+El endpoint MCP se publica en `http://127.0.0.1:8001/mcp` por defecto. El cliente MCP se
+configura con Streamable HTTP y envía `Authorization: Bearer <access_token>` en cada solicitud.
+Como se puede observar, el servidor valida cada invocación de forma independiente.
 
-Para obtener un token autorizado, registre e inicie sesion con una identidad `agent` en
+Para obtener un token autorizado, se registra e inicia sesión con una identidad `agent` en
 `auth-service`. Los roles `user` y `admin` no tienen acceso a esta herramienta.
 
 ## Tool
