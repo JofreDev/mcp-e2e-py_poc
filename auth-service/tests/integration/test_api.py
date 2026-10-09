@@ -49,6 +49,13 @@ def login(
     return response.json()
 
 
+def test_health_check(client: TestClient) -> None:
+    response = client.get("/health")
+
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok"}
+
+
 def test_human_registration_login_and_validation(client: TestClient) -> None:
     register_human(client, "person@example.com")
 

@@ -1,0 +1,45 @@
+services:
+  auth-service:
+    build:
+      context: ./auth-service
+    environment:
+      AUTH_DATABASE_URL: sqlite+aiosqlite:///./data/auth.db
+      AUTH_JWT_SECRET: ${AUTH_JWT_SECRET:-}
+      AUTH_AUTO_CREATE_SCHEMA: "false"
+      AUTH_JWT_ISSUER: auth-service
+      AUTH_JWT_AUDIENCE: mcp-api
+    ports:
+      - "127.0.0.1:${AUTH_SERVICE_PORT:-8000}:8000"
+    volumes:
+      - auth-data:/app/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "from urllib.request import urlopen; urlopen('http://127.0.0.1:8000/health').read()"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 10s
+    restart: unless-stopped
+
+  mcp-service:
+    build:
+      context: ./mcp-service
+    environment:
+      MCP_AUTH_SERVICE_URL: http://auth-service:8000
+      MCP_REQUEST_TIMEOUT_SECONDS: "10"
+      MCP_HOST: 0.0.0.0
+      MCP_PORT: "8001"
+    depends_on:
+      auth-service:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${MCP_SERVICE_PORT:-8001}:8001"
+    healthcheck:
+      test: ["CMD", "python", "-c", "from socket import create_connection; create_connection(('127.0.0.1', 8001), 2).close()"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 10s
+    restart: unless-stopped
+
+volumes:
+  auth-data:

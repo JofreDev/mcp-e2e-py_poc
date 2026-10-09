@@ -70,6 +70,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
     app.state.auth_service = auth_service
     app.state.database = database
+
+    @app.get("/health", include_in_schema=False)
+    async def health() -> dict[str, str]:
+        return {"status": "ok"}
+
     app.include_router(router, prefix="/api/v1")
     register_error_handlers(app)
     return app
