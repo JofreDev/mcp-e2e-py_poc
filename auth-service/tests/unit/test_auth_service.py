@@ -93,7 +93,7 @@ class FakePrincipalRepository:
 class FakeAuthorizationRepository:
     ROLE_PERMISSIONS: ClassVar[dict[str, frozenset[str]]] = {
         "user": frozenset({"profile:read"}),
-        "agent": frozenset({"profile:read"}),
+        "agent": frozenset({"fx:read", "profile:read"}),
         "admin": frozenset({"users:read", "profile:read"}),
     }
 
@@ -228,6 +228,17 @@ async def test_duplicate_identity_is_rejected(
 
     with pytest.raises(PrincipalAlreadyExistsError):
         await service.register_agent("REPORT-AGENT", "password")
+
+
+@pytest.mark.asyncio
+async def test_register_agent_assigns_fx_read_permission(
+    service_components: tuple[AuthService, FakeState, FakePasswordHasher, FakeTokenCodec],
+) -> None:
+    service, state, _, _ = service_components
+
+    principal = await service.register_agent("report-agent", "password")
+
+    assert state.authorizations[principal.id].permissions == {"fx:read", "profile:read"}
 
 
 @pytest.mark.asyncio
