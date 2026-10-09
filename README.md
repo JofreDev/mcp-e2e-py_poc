@@ -1,7 +1,6 @@
 # MCP E2E Python PoC
 
-Este monorepo demuestra autenticacion y autorizacion de herramientas MCP. Docker Compose
-inicia ambos servicios y conserva la base de datos SQLite en un volumen Docker.
+Conforme al laboratorio desarrollado, este proyecto permite realizar un consumo de una capacidad (https://frankfurter.dev/es/) de cambio de divisas a traves del protocolo mcp. Consta de un servicio de autenticación y autorización y un servidor mcp.  
 
 ## Componentes
 
@@ -10,7 +9,7 @@ inicia ambos servicios y conserva la base de datos SQLite en un volumen Docker.
 - [`mcp-service`](./mcp-service): servidor FastMCP con transporte Streamable HTTP y la
   herramienta `convert_currency`, protegida por el permiso `fx:read`.
 
-Como se puede observar, las identidades de tipo `agent` reciben `fx:read`. Las identidades
+Las identidades de tipo `agent` reciben `fx:read`. Las identidades
 humanas y administradoras no reciben ese permiso y no pueden ejecutar la herramienta.
 
 ## Levantar con Docker
@@ -32,7 +31,12 @@ Se requiere Docker Desktop con Docker Compose v2.
    explícitamente `AUTH_JWT_SECRET`. Esto es necesario cuando se controla el secreto o se
    despliega fuera de un entorno local de prueba.
 
-Como se puede observar con `docker compose ps`, ambos servicios quedan en estado `healthy`.
+Como se puede evidenciar con `docker compose ps`, ambos servicios quedan en estado `healthy`.
+
+![alt text](image-3.png)
+![alt text](image-2.png)
+
+
 Las URLs locales son:
 
 - Swagger de autenticacion: `http://127.0.0.1:8000/docs`
