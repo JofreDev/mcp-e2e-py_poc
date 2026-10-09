@@ -81,7 +81,7 @@ def test_agent_registration_and_token_claims(client: TestClient) -> None:
 
     assert claims["actor_type"] == "agent"
     assert claims["admin"] is False
-    assert claims["permissions"] == ["profile:read"]
+    assert claims["permissions"] == ["fx:read", "profile:read"]
     assert claims["aud"] == "mcp-api"
     assert "admin" not in refresh_claims
     assert "permissions" not in refresh_claims

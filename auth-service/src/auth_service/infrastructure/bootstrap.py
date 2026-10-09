@@ -18,7 +18,7 @@ from auth_service.infrastructure.database import (
 
 ROLE_PERMISSIONS: dict[str, frozenset[str]] = {
     "user": frozenset({"profile:read"}),
-    "agent": frozenset({"profile:read"}),
+    "agent": frozenset({"fx:read", "profile:read"}),
     "admin": frozenset(
         {
             "profile:read",
