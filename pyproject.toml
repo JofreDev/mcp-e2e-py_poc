@@ -1,0 +1,63 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mcp-e2e-py-poc"
+version = "0.1.0"
+description = "Proof of concept authentication service with FastAPI, SQLite, and JWT"
+readme = "README.md"
+requires-python = ">=3.14,<3.15"
+dependencies = [
+    "aiosqlite>=0.21.0",
+    "alembic>=1.16.0",
+    "email-validator>=2.2.0",
+    "fastapi>=0.116.0",
+    "pwdlib[argon2]>=0.2.1",
+    "pydantic-settings>=2.10.0",
+    "pyjwt>=2.10.0",
+    "sqlalchemy[asyncio]>=2.0.40",
+    "uvicorn[standard]>=0.35.0",
+]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.0",
+    "mypy>=1.17.0",
+    "pytest>=8.4.0",
+    "pytest-asyncio>=1.1.0",
+    "pytest-cov>=6.2.0",
+    "ruff>=0.12.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/auth_service"]
+
+[tool.pytest.ini_options]
+addopts = "--strict-markers --cov=auth_service --cov-report=term-missing --cov-fail-under=90"
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.coverage.run]
+branch = true
+source = ["auth_service"]
+
+[tool.coverage.report]
+exclude_also = [
+    "if TYPE_CHECKING:",
+    "if __name__ == .__main__.:",
+    '\.\.\.',
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py314"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF", "ASYNC"]
+
+[tool.mypy]
+python_version = "3.14"
+strict = true
+packages = ["auth_service"]
+exclude = ["migrations"]
